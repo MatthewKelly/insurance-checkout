@@ -1,7 +1,13 @@
 const readline = require('readline-sync');
-const products = require('./products');
-const PricingEngine = require('./pricingEngine');
-const pricingRules = require('./pricingRules');
+const products = require('./config/products');
+const PricingEngine = require('./calculators/pricingEngine');
+const TotalsCalculator = require('./calculators/totalsCalculator');
+const pricingRules = require('./config/pricingRules');
+
+let totalsCalculator = new TotalsCalculator();
+let pricingEngine = new PricingEngine(products);
+
+
 const items = [];
 let repeat = true;
 
@@ -20,18 +26,13 @@ while (repeat == true) {
 }
 console.log(`Products on checkout = ${items}`);
 
-// get total without balances
-let total = 0;
-for (let item of items) {
-    total = total + products[item]; 
-}
+// get initial total
+let total = totalsCalculator.calculateTotal(items, products);
 console.log(`Total before discounts = $${total.toFixed(2)}` );
 
 // add discounts
-let pricingEngine = new PricingEngine();
 let discounts = pricingEngine.calculateDiscounts(items, pricingRules);
-for (let discount of discounts) {
-    console.log(`${discount.code} applied for discount of $${discount.amount.toFixed(2)}`);
-    total = total - discount.amount;
-}
+
+// apply discounts
+total = totalsCalculator.applyDiscounts(total, discounts);
 console.log(`Total after discounts = $${total.toFixed(2)}`);

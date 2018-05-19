@@ -1,5 +1,10 @@
-productPricing = require('./products');
+
 module.exports = class PricingEngine {
+
+    constructor(productPricing) {
+        this.productPricing = productPricing;
+    }
+
     calculateDiscounts(products, pricingRules) {
         let discounts = [];
         for (let pricingRule of pricingRules) {
@@ -29,7 +34,7 @@ module.exports = class PricingEngine {
         let productOnSale = pricingRule.data.product;
         let matchingProducts = products.filter((product) => { return product === productOnSale;});
         if (minimum && matchingProducts.length &&  matchingProducts.length > minimum ) {
-            let discountAmount = (productPricing[productOnSale] - pricingRule.data.reducedPrice) * matchingProducts.length;
+            let discountAmount = (this.productPricing[productOnSale] - pricingRule.data.reducedPrice) * matchingProducts.length;
             return { code: pricingRule.code, amount: discountAmount};
         }
     }
@@ -39,7 +44,7 @@ module.exports = class PricingEngine {
         let productOnSale = pricingRule.data.product;
         let matchingProducts = products.filter((product) => {return productOnSale === product});
         if (matchingProducts.length > 0 ) {
-            return { code: pricingRule.code, amount: productPricing[freebie] * matchingProducts.length};
+            return { code: pricingRule.code, amount: this.productPricing[freebie] * matchingProducts.length};
         } 
     }
 
@@ -50,8 +55,8 @@ module.exports = class PricingEngine {
         let matchingProducts = products.filter((product) => { return productOnSale === product});
         let noOfFreebies = Math.floor(matchingProducts.length / minimum);
         if (noOfFreebies >= 1) {
-            let discount = productPricing[productOnSale] * amountFree;
-            return { code: pricingRule.code, amount: productPricing[productOnSale] * amountFree};
+            let discount = this.productPricing[productOnSale] * amountFree;
+            return { code: pricingRule.code, amount: this.productPricing[productOnSale] * amountFree};
         }
     }
 
