@@ -33,7 +33,7 @@ module.exports = class PricingEngine {
         let minimum = pricingRule.data.minimumAmount;
         let productOnSale = pricingRule.data.product;
         let matchingProducts = products.filter((product) => { return product === productOnSale;});
-        if (minimum && matchingProducts.length &&  matchingProducts.length > minimum ) {
+        if (minimum && matchingProducts.length &&  matchingProducts.length >= minimum ) {
             let discountAmount = (this.productPricing[productOnSale] - pricingRule.data.reducedPrice) * matchingProducts.length;
             return { code: pricingRule.code, amount: discountAmount};
         }
